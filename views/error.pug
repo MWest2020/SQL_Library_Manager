@@ -1,6 +1,7 @@
-extends layout
-
+extends layout.pug
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+  h1 Page Not Found
+  p Sorry! We couldn&apos;t find the page you were looking for.
+  br
+  p
+    a.button(href='/books') Home

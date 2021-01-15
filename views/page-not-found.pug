@@ -1,0 +1,10 @@
+extends layout.pug
+block content 
+    
+    a(href='/') ← Back
+
+        h1 No one gets through life without losing a few things
+        br
+        h2= error.message
+        h2= error.status
+        pre= error.stack
