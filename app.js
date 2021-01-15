@@ -1,13 +1,62 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+
+const app = express();
+
+
+//
+// STEP 5
+//
+
+const models = require('./models');
+
+const {Book} = models;
+
+(async () => {
+
+  await models.sequelize.authenticate(console.log('db connected'));
+  
+  await models.sequelize.sync( {force: true});
+
+  try{
+    
+  const dbInstances = await Promise.all([
+
+    Book.create({
+      title: "JavaScript: The Good Parts",
+      author: "Douglas Crockford",
+      genre: "Computer Science",
+      year: 2008,
+    })
+
+
+  ]);
+
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+        // if the error is the above, map over the error items and returns an array holding error messages and log.
+        const errors = error.errors.map((err ) => 
+            err.message );
+            console.error('Validation errors: ', errors);
+    } else {
+        //catch all other (unforeseen) errors
+        throw error;
+    }
+  }
+})();
+
+
+
+
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
