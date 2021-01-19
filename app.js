@@ -4,9 +4,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-// const pug = require('pug');
+const sequelize = require('./models').sequelize; //import Sequelize
 const routes = require('./routes/index');
-const books = require('./routes/books');
+// const books = require('./routes/books');
+
+
+
+
 
 const app = express();
 //static middleware
@@ -17,42 +21,43 @@ app.use('/static', express.static('./public'));
 // STEP 5
 //
 
-const models = require('./models');
+// const models = require('./models');
 
-const {Book} = models;
+// const {Book} = models;
 
-(async () => {
+// (async () => {
 
-  await models.sequelize.authenticate(console.log('db connected'));
+//   await models.sequelize.authenticate(console.log('db connected'));
   
-  await models.sequelize.sync( {force: true});
+//   await models.sequelize.sync( {force: true});
 
-  try{
+//   try{
     
-  const dbInstances = await Promise.all([
+//   const dbInstances = await Promise.all([
 
-    Book.create({
-      title: "JavaScript: The Good Parts",
-      author: "Douglas Crockford",
-      genre: "Computer Science",
-      year: 2008,
-    })
+//     // Book.create({
+//     //   title: "JavaScript: The Good Parts",
+//     //   author: "Douglas Crockford",
+//     //   genre: "Computer Science",
+//     //   year: 2008,
+//     // })
 
+    
 
-  ]);
+//   ]);
 
-  } catch (error) {
-    if (error.name === 'SequelizeValidationError') {
-        // if the error is the above, map over the error items and returns an array holding error messages and log.
-        const errors = error.errors.map((err ) => 
-            err.message );
-            console.error('Validation errors: ', errors);
-    } else {
-        //catch all other (unforeseen) errors
-        throw error;
-    }
-  }
-})();
+//   } catch (error) {
+//     if (error.name === 'SequelizeValidationError') {
+//         // if the error is the above, map over the error items and returns an array holding error messages and log.
+//         const errors = error.errors.map((err ) => 
+//             err.message );
+//             console.error('Validation errors: ', errors);
+//     } else {
+//         //catch all other (unforeseen) errors
+//         throw error;
+//     }
+//   }
+// })();
 
 
 
@@ -71,7 +76,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/books', books);
+// app.use('/books', books);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

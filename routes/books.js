@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { sequelize, Book } = require('../models');
-
+const db = require('../models');
 
 // Handler function to wrap each route
 function asyncHandler(cb){
@@ -15,14 +15,15 @@ function asyncHandler(cb){
   }
 }
 
+
 /* GET books listing. */
-router.get('/', asyncHandler(async(req, res, next) => {
+router.get('/books', asyncHandler(async(req, res, next) => {
   const books = await Book.findAll();
   res.render('index', {books, title: 'Library Books'});
 }));
 
 /* Create a new book form */
-router.get('/books/new', (req,res) => {
+router.get('/new', (req,res) => {
   res.render('new-book', { book: {}, title: 'New Book' });
 });
 
