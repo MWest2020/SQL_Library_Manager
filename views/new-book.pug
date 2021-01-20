@@ -6,10 +6,10 @@ block content
   if errors
     include form-error
   
-  form
+  form(action="/books/new" method="POST")
     p
-      label(for='title') Title
-      input#title(name='title' type='text')
+      label(for="title") Title
+      input(name='title' type='text')
     p
       label(for='author') Author
       input#author(name='author' type='text')
