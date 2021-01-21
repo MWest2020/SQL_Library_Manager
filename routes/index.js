@@ -1,13 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-
 const {sequelize, Book } = require('../models');
 const {Op} = require('sequelize');
-const db = require('../models');
 
 let searchString = "";
-
 
 // Handler function to wrap each route
 function asyncHandler(cb){
@@ -21,16 +18,10 @@ function asyncHandler(cb){
   }
 }
 
-
-
-
-
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.redirect('/books');
 });
-
-
 
 
 /* GET books listing. */
@@ -47,7 +38,9 @@ router.get('/books', asyncHandler(async(req, res, next) => {
           {genre: {[Op.like]: `%${searchValue}%`}},
           {year: {[Op.like]: `%${searchValue}%`}},
         ]
-      }
+      },
+      offset: 0,
+      limit: 10
     })
     res.render('index', {books});
   }
@@ -65,7 +58,9 @@ router.post('/books', asyncHandler(async(req, res, next) => {
           {genre: {[Op.like]: `%${req.body.query}%`}},
           {year: {[Op.like]: `%${req.body.query}%`}},
         ]
-      }
+      },
+      offset: 0,
+      limit: 10
     })
     searchValue = req.body.query;
     res.render('index', {books});

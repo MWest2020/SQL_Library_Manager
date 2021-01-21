@@ -3,7 +3,7 @@ block content
 
   h1 Books
   p
-    a.button(href='books/new') Create New Book
+    a.button(href='/books/new') Create New Book
   table
     thead
       tr
@@ -22,6 +22,6 @@ block content
 
 
   div.searchbar
-  form.search(action="/books/", method="POST")
+  form.search(action="/books", method="POST")
     input(type="text", name="query")
     input.search(type="submit" value="Search")
