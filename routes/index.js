@@ -6,7 +6,7 @@ const {sequelize, Book } = require('../models');
 const {Op} = require('sequelize');
 const db = require('../models');
 
-
+let searchString = "";
 
 
 // Handler function to wrap each route
@@ -35,12 +35,43 @@ router.get('/', (req, res, next) => {
 
 /* GET books listing. */
 router.get('/books', asyncHandler(async(req, res, next) => {
-  const books = await Book.findAll();
+  if(searchString === ""){
+    const books = await Book.findAll();
   res.render('index', {books});
+  } else {
+    const books = await Book.findAll({
+      where: {
+        [Op.or]:[
+          {title: {[Op.like]: `%${searchValue}%`}},
+          {author: {[Op.like]: `%${searchValue}%`}},
+          {genre: {[Op.like]: `%${searchValue}%`}},
+          {year: {[Op.like]: `%${searchValue}%`}},
+        ]
+      }
+    })
+    res.render('index', {books});
+  }
 }));
 
+//Search Route
 
-//serch route
+router.post('/books', asyncHandler(async(req, res, next) => {
+  
+    const books = await Book.findAll({
+      where: {
+        [Op.or]:[
+          {title: {[Op.like]: `%${req.body.query}%`}},
+          {author: {[Op.like]: `%${req.body.query}%`}},
+          {genre: {[Op.like]: `%${req.body.query}%`}},
+          {year: {[Op.like]: `%${req.body.query}%`}},
+        ]
+      }
+    })
+    searchValue = req.body.query;
+    res.render('index', {books});
+  }
+));
+
 
 /* Create a new book form */
 router.get('/books/new', (req,res) => {
@@ -102,6 +133,10 @@ router.post('/books/:id/delete', asyncHandler(async (req, res) => {
     res.sendStatus(404);
   }
 }));
+
+
+
+
 
 
 module.exports = router;

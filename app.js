@@ -9,60 +9,9 @@ const routes = require('./routes/index');
 // const books = require('./routes/books');
 
 
-
-
-
 const app = express();
 //static middleware
 app.use('/static', express.static('./public'));
-
-
-//
-// STEP 5
-//
-
-// const models = require('./models');
-
-// const {Book} = models;
-
-// (async () => {
-
-//   await models.sequelize.authenticate(console.log('db connected'));
-  
-//   await models.sequelize.sync( {force: true});
-
-//   try{
-    
-//   const dbInstances = await Promise.all([
-
-//     // Book.create({
-//     //   title: "JavaScript: The Good Parts",
-//     //   author: "Douglas Crockford",
-//     //   genre: "Computer Science",
-//     //   year: 2008,
-//     // })
-
-    
-
-//   ]);
-
-//   } catch (error) {
-//     if (error.name === 'SequelizeValidationError') {
-//         // if the error is the above, map over the error items and returns an array holding error messages and log.
-//         const errors = error.errors.map((err ) => 
-//             err.message );
-//             console.error('Validation errors: ', errors);
-//     } else {
-//         //catch all other (unforeseen) errors
-//         throw error;
-//     }
-//   }
-// })();
-
-
-
-
-
 
 
 // view engine setup

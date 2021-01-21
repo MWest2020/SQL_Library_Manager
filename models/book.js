@@ -2,6 +2,7 @@
 const {
   Sequelize, Model, DataTypes
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Book extends Model {
     /**
@@ -15,15 +16,25 @@ module.exports = (sequelize, DataTypes) => {
   };
   Book.init({
     title: { 
-      type:DataTypes.STRING,
-      allowNull: false
+      type: Sequelize.STRING,
+      allowNull: false,
+      validate:{
+        notEmpty: {
+          msg: "Please specify a title for the book to enter"
+        }
+      }
     },
     author: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate:{
+        notEmpty: {
+          msg: "Please specify an author for the book to enter"
+        }
+      }
     },
-    genre: DataTypes.STRING,
-    year: DataTypes.INTEGER
+    genre: Sequelize.STRING,
+    year: Sequelize.INTEGER
   }, {
     sequelize,
     modelName: 'Book',

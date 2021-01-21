@@ -19,3 +19,9 @@ block content
           td= book.author
           td= book.genre
           td= book.year
+
+
+  div.searchbar
+  form.search(action="/books/", method="POST")
+    input(type="text", name="query")
+    input.search(type="submit" value="Search")

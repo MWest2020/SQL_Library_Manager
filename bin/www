@@ -29,7 +29,7 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-
+//sequelize.sync automatically syncs all model
 models.sequelize.sync().then(()=>{
   server.listen(port, ()=> {
     debug('Express server listerning on port' + server.address().port);
