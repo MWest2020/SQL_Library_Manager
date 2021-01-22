@@ -27,7 +27,10 @@ router.get('/', (req, res, next) => {
 /* GET books listing. */
 router.get('/books', asyncHandler(async(req, res, next) => {
   if(searchString === ""){
-    const books = await Book.findAll();
+    const books = await Book.findAll({
+      offset: 0,
+      limit: 10
+    });
   res.render('index', {books});
   } else {
     const books = await Book.findAll({
