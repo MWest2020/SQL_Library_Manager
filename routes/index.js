@@ -134,9 +134,9 @@ router.post('/books/:id/delete', asyncHandler(async (req, res) => {
     }
 }));
 
-// router.get('*', (req, res) => {
-//   res.render('page-not-found', {book, errors: error.errors})
-// })
+router.get('*', (req, res) => {  
+  res.render('page-not-found');
+});
 
 
 module.exports = router;
