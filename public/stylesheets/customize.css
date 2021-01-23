@@ -1,0 +1,51 @@
+* {
+    border-sizing: border-box;
+}
+
+@media screen and (max-width: 800px) {
+    body {
+      max-width: 90%;
+      margin: 0 auto;
+    }
+  }
+
+body  {
+    background-color: #E8DAB2;
+    max-width: 60%;
+    margin: 0 auto;
+}
+
+.link-list-item {
+  
+    display: flex;
+    justify-self: center;
+    display: inline;
+    margin-right: 10px;
+    
+  }
+  
+.main-links p,
+.main-links form {
+  display: inline-block;
+}
+
+.active {
+  background-color: #01b189;
+  color: white;
+  border-radius: 5px 10px;
+}
+
+input {
+    margin-bottom: 1em;
+}
+
+a.page-links {
+    padding: 0.5em;
+    
+    /* display: inline-block; */
+    
+}
+
+ul {
+    text-align: center;
+}

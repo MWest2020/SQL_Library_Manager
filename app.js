@@ -1,17 +1,16 @@
-
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const sequelize = require('./models').sequelize; //import Sequelize
-const routes = require('./routes/index');
-// const books = require('./routes/books');
-
+const { sequelize } = require('./models'); // import Sequelize
+const indexRouter = require('./routes/index');
 
 const app = express();
-//static middleware
-app.use('/static', express.static('./public'));
+
+
+sequelize.authenticate();
+sequelize.sync();
+
 
 
 // view engine setup
@@ -20,27 +19,34 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-// app.use('/books', books);
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use((req, res, next) => {
+  const err = new Error(`We have trouble finding the page you requested.`);
+  err.status = 404;
+  next(err)
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use((err, req, res) => {
+  if(err.status) {
+    if(err.status === 404) {
+      res.render('page-not-found', {err});
+    } else {
+      res.render('error', {err});
+    }
+  } else {
+    err.message = "There's an issue on the server side. Please try again later."
+    err.status = 500;
+    console.log(err.status, err.message);
+    res.render('error', {err});
+  }
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
 });
 
 module.exports = app;

@@ -1,7 +1,8 @@
-extends layout.pug
+extends layout
+
 block content
-  h1 Page Not Found
-  p Sorry! We couldn&apos;t find the page you were looking for.
-  br
-  p
-    a.button(href='/books') Home
+   h1 Something is not right on the server-side
+   p #{err.message}
+   br
+   p
+      a.button(href="/books/?page=0") Home

@@ -1,112 +1,114 @@
 const express = require('express');
 const router = express.Router();
+const { Book } = require('../models');
+const { Op }  = require('sequelize');         //Needed for search operators
 
-const {sequelize, Book } = require('../models');
-const {Op} = require('sequelize');
+// Create ongoing variable to be updated by search route
+let searchQuery = '';
 
-let searchString = "";
-
-// Handler function to wrap each route
+// Handles asynchronous functions
 function asyncHandler(cb){
-  return async(req,res,next) => {
+  return async(req, res, next) => {
     try {
       await cb(req, res, next)
     } catch(error){
-      // forward error to the global error Handler
       next(error);
     }
   }
 }
 
-/* GET home page. */
-router.get('/', (req, res, next) => {
-  res.redirect('/books');
+// GET Home page and redirect
+router.get('/', (req, res) => {
+    res.redirect('/books/?page=0');
 });
 
-
-/* GET books listing. */
-router.get('/books', asyncHandler(async(req, res, next) => {
-  if(searchString === ""){
-    const books = await Book.findAll({
-      offset: 0,
-      limit: 10
+// Main route for page load and search query
+router.get('/books', asyncHandler(async (req, res) => {
+  if(searchQuery === '') {
+    const {count, rows} = await Book.findAndCountAll({
+      order: [['title', 'ASC']],
+      offset: parseInt(req.query.page) * 10,
+      limit: 10,
     });
-  res.render('index', {books});
+    const pagination = count / 10;
+    res.render('index', {count, rows, pagination});
   } else {
-    const books = await Book.findAll({
+    const {count, rows} = await Book.findAndCountAll({ 
+      
       where: {
-        [Op.or]:[
-          {title: {[Op.like]: `%${searchValue}%`}},
-          {author: {[Op.like]: `%${searchValue}%`}},
-          {genre: {[Op.like]: `%${searchValue}%`}},
-          {year: {[Op.like]: `%${searchValue}%`}},
+        [Op.or]: [
+          {title: {[Op.like]: `%${searchQuery}%`}},
+          {author: {[Op.like]: `%${searchQuery}%`}},
+          {publisher: {[Op.like]: `%${searchQuery}%`}},
+          {genre: {[Op.like]: `%${searchQuery}%`}},
+          {year: {[Op.like]: `%${searchQuery}%`}},
         ]
       },
-      offset: 0,
-      limit: 10
-    })
-    res.render('index', {books});
+      order: [['title', 'ASC']],
+      offset: parseInt(req.query.page) * 10,
+      limit: 10,
+    });
+    const pagination = count / 10;
+    res.render('index', {count, rows, pagination});
   }
 }));
 
-//Search Route
+// Search route
+router.post('/books', asyncHandler(async (req, res) => {
+  const {count, rows} = await Book.findAndCountAll({
+    where: {
+      [Op.or]: [
+        {title: {[Op.like]: `%${req.body.query}%`}},
+        {author: {[Op.like]: `%${req.body.query}%`}},
+        {publisher: {[Op.like]: `%${req.body.query}%`}},
+        {genre: {[Op.like]: `%${req.body.query}%`}},
+        {year: {[Op.like]: `%${req.body.query}%`}},
+      ]
+    },
+    order: [['title', 'ASC']],
+    offset: parseInt(req.query.page) * 10,
+    limit: 10,
+  });
+  const pagination = count / 10;
+  searchQuery = req.body.query;
+  res.render('index', {count, rows, pagination});
+}));
 
-router.post('/books', asyncHandler(async(req, res, next) => {
-  
-    const books = await Book.findAll({
-      where: {
-        [Op.or]:[
-          {title: {[Op.like]: `%${req.body.query}%`}},
-          {author: {[Op.like]: `%${req.body.query}%`}},
-          {genre: {[Op.like]: `%${req.body.query}%`}},
-          {year: {[Op.like]: `%${req.body.query}%`}},
-        ]
-      },
-      offset: 0,
-      limit: 10
-    })
-    searchValue = req.body.query;
-    res.render('index', {books});
-  }
-));
-
-
-/* Create a new book form */
-router.get('/books/new', (req,res) => {
+// New book form page
+router.get('/books/new', (req, res) => {
   res.render('new-book');
 });
 
-/* POST a newly created book. */
+// New book submit
 router.post('/books/new', asyncHandler(async (req, res) => {
   let book;
   try {
     book = await Book.create(req.body);
-    res.redirect('/')
-  } catch (error) {
-    if(error.name === 'SequelizeValidationError') {
+    res.redirect(`/books/?page=0`);
+  } catch(error) {
+    if(error.name === "SequelizeValidationError") { // checking the error type
       book = await Book.build(req.body);
-      res.render('form-error', { book, errors: error.errors})
+      res.render("new-book", {book, errors: error.errors});
     } else {
       throw error;
     }
   }
 }));
 
-/* UPDATE a single book */
-router.get('/books/:id', asyncHandler(async(req, res) => {
+// Book Update and Delete Page
+router.get('/books/:id', asyncHandler(async (req, res) => {
   const book = await Book.findByPk(req.params.id);
-  res.render('update-book', { id: req.params.id, book})
-  
-  }));
+  res.render('update-book', {id: req.params.id, book});
+}));
 
 /* POST an updated book. */
 router.post('/books/:id', asyncHandler(async (req, res) => {
   let book;
   try {
-    book = await Book.findByPk(req.params.id);
+    book = await Book.findByPk(parseInt(req.params.id));
     if(book) {
       await book.update(req.body);
-      res.redirect('/books/');
+      res.redirect('/books?page=0');
     } else {
       res.sendStatus(404);
     }
@@ -121,20 +123,20 @@ router.post('/books/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-// /* Delete single book. */
+// Book Delete submit
 router.post('/books/:id/delete', asyncHandler(async (req, res) => {
   const book = await Book.findByPk(req.params.id);
-  if(book) {
-    await book.destroy();
-    res.redirect('/');
-  } else {
-    res.sendStatus(404);
-  }
+    if(book) {
+      await book.destroy();
+      res.redirect('/books/?page=0');
+    } else {
+      res.sendStatus(404);
+    }
 }));
 
-
-
-
+// router.get('*', (req, res) => {
+//   res.render('page-not-found', {book, errors: error.errors})
+// })
 
 
 module.exports = router;

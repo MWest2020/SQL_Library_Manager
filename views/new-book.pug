@@ -1,25 +1,27 @@
-extends layout.pug
-block content
+extends layout
 
+block content
   h1 New Book
-  
-  if errors
-    include form-error
-  
-  form(action="/books/new" method="POST")
+
+  include errors
+
+  form(action="/books/new", method="POST")
     p
       label(for="title") Title
-      input(name='title' type='text')
+      input(name="title" type="text" id="title")
     p
-      label(for='author') Author
-      input#author(name='author' type='text')
+      label(for="author") Author
+      input(name="author" type="text" id="author")
     p
-      label(for='genre') Genre
-      input#genre(name='genre' type='text')
+      label(for="publisher") Publisher
+      input(name="publisher" type="text" id="publisher")  
     p
-      label(for='year') Year
-      input#year(name='year' type='text')
+      label(for="genre") Genre
+      input(name="genre" type="text" id="genre")
     p
-      input(type='submit' value='Create New Book')
+      label(for="year") Year
+      input(name="year" type="text" id="year")
     p
-      a.button(href='/books') Cancel
+      input(type="submit" value="Create New Book")
+    p
+      a.button(href='/') Cancel

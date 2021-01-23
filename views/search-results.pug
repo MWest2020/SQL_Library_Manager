@@ -1,14 +1,12 @@
 extends layout
 
 block content
-  h1 A SQL Library App
+  h1 Books
   div.main-links
     p
       a.button(href="/books/new") Create New Book
     
-  form.search-input(action="/books/?page=0", method="POST")
-    input(type="text", name="query")
-    input.search-submit(type="submit", value="Search")
+      a.button(href="/books") Home
 
   if(rows.length > 0)
     table
