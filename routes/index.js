@@ -22,11 +22,13 @@ router.get('/', (req, res) => {
     res.redirect('/books/?page=0');
 });
 
+
+
 // Main route for page load and search query
 router.get('/books', asyncHandler(async (req, res) => {
   if(searchQuery === '') {
     const {count, rows} = await Book.findAndCountAll({
-      order: [['title', 'ASC']],
+      order: [["title", "ASC"]],
       offset: parseInt(req.query.page) * 10,
       limit: 10,
     });
@@ -44,7 +46,7 @@ router.get('/books', asyncHandler(async (req, res) => {
           {year: {[Op.like]: `%${searchQuery}%`}},
         ]
       },
-      order: [['title', 'ASC']],
+      order: [["title", "ASC"]],
       offset: parseInt(req.query.page) * 10,
       limit: 10,
     });
@@ -54,7 +56,7 @@ router.get('/books', asyncHandler(async (req, res) => {
 }));
 
 // Search route
-router.post('/books', asyncHandler(async (req, res) => {
+router.post('/books/:id', asyncHandler(async (req, res) => {
   const {count, rows} = await Book.findAndCountAll({
     where: {
       [Op.or]: [
@@ -65,7 +67,7 @@ router.post('/books', asyncHandler(async (req, res) => {
         {year: {[Op.like]: `%${req.body.query}%`}},
       ]
     },
-    order: [['title', 'ASC']],
+    order: [["title", "ASC"]],
     offset: parseInt(req.query.page) * 10,
     limit: 10,
   });
@@ -96,9 +98,24 @@ router.post('/books/new', asyncHandler(async (req, res) => {
 }));
 
 // Book Update and Delete Page
-router.get('/books/:id', asyncHandler(async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
-  res.render('update-book', {id: req.params.id, book});
+router.get('/books/:id', asyncHandler(async(req, res, next) => {
+  const books = await Book.findAll();
+  let book = null;
+
+  for (let i = 0; i < books.length; i++) {
+    if (books[i].id == req.params.id) {
+      book = books[i]
+    }
+  }
+
+  if (!book) {
+    const err = new Error();
+    
+    err.message = 'Looks like the book you requested does not exist.';
+    res.render('no-results');
+  } else {
+      res.render("update-book", { book });
+  }  
 }));
 
 /* POST an updated book. */
@@ -108,7 +125,7 @@ router.post('/books/:id', asyncHandler(async (req, res) => {
     book = await Book.findByPk(parseInt(req.params.id));
     if(book) {
       await book.update(req.body);
-      res.redirect('/books?page=0');
+      res.redirect(`/books/?page=0`);
     } else {
       res.sendStatus(404);
     }
@@ -133,10 +150,6 @@ router.post('/books/:id/delete', asyncHandler(async (req, res) => {
       res.sendStatus(404);
     }
 }));
-
-router.get('*', (req, res) => {  
-  res.render('page-not-found');
-});
 
 
 module.exports = router;

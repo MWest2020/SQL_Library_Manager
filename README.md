@@ -1,17 +1,26 @@
-# Library CRUD application
+# A Library Database, built with SQL, Node.js and Express
+A CRUD application that handles creating, storing, updating and deleting book entries
 
-A CRUD application for libraries.  The user can view, add, update, or remove items from a library database.
+## General Info
 
-Uses Node, Express, Pug, SQLite3 and Sequelize as well as some front end JavaScript
+The aim for this showcase CRUD application is to let potential clients and employers see what I have done so far and the stack I have 
+been using on each of the projects. Expect this app to grow as my journey towards a Full-Stack developer continues. I love Books :)
 
-*** Original CSS by Team Treehouse
- - Added styles for search function on main page
- - Added styles for search reset button
- -Added styles for pagination buttons
+I altered the CSS margins a bit to give it a more polished look. The CSS is at the moment only for dektop and large screens. Media queires should be written for smaller screens.I redid the 
+background colors and added a bit of margin here and there to give it a less cramped feeling. 
 
- # Installation
- Run "npm install" to download dependancies
+## Technologies
 
- # To Run
-  - Start the application with "npm start"
-  - Point your browser to localhost:3000
+* HTML 5   
+* CSS 3
+* JavaScript ES6
+* SQL, sqlite3
+* Node.js
+* Express
+
+
+The app is started by downloading all the files and by running the `npm install` and then `npm start`. Any modern browser should support the code used for this project.
+
+### Note:
+
+Future update may include more entries, columns, bulk creation and deletion and CSS styling.  

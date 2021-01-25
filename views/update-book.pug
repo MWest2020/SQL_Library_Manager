@@ -6,7 +6,7 @@ block content
 
   include errors
 
-    form(method="POST", action=`/books/${book.id}`)
+    form(action=`/books/${book.id}/` method="POST")
         p
           label(for="title") Title
           input(name="title" type="text" id="title" value=`${book.title}`)
