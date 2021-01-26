@@ -21,7 +21,7 @@ body  {
     justify-self: center;
     display: inline;
     margin-right: 10px;
-    
+    text-align: center; 
   }
   
 .main-links p,
@@ -41,11 +41,15 @@ input {
 
 a.page-links {
     padding: 0.5em;
-    
+    text-align: center;
     /* display: inline-block; */
     
 }
 
 ul {
-    text-align: center;
+    text-align: left;
+}
+
+.error {
+  text-align: left;
 }
