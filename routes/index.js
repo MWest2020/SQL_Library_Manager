@@ -23,12 +23,11 @@ router.get('/', (req, res) => {
 });
 
 
-
 // Main route for page load and search query
 router.get('/books', asyncHandler(async (req, res) => {
   if(searchQuery === '') {
     const {count, rows} = await Book.findAndCountAll({
-      order: [["title", "ASC"]],
+      order: [['title', 'ASC']],
       offset: parseInt(req.query.page) * 10,
       limit: 10,
     });
@@ -56,7 +55,7 @@ router.get('/books', asyncHandler(async (req, res) => {
 }));
 
 // Search route
-router.post('/books/:id', asyncHandler(async (req, res) => {
+router.post('/books', asyncHandler(async (req, res) => {
   const {count, rows} = await Book.findAndCountAll({
     where: {
       [Op.or]: [
@@ -98,44 +97,47 @@ router.post('/books/new', asyncHandler(async (req, res) => {
 }));
 
 // Book Update and Delete Page
+/* GET book detail page. */
 router.get('/books/:id', asyncHandler(async(req, res, next) => {
   const books = await Book.findAll();
-  let book = null;
+  let book = null; //set to false
 
   for (let i = 0; i < books.length; i++) {
     if (books[i].id == req.params.id) {
-      book = books[i]
+      book = books[i]; //set to true (object are per definition true)
     }
   }
 
   if (!book) {
-    const err = new Error();
     
+    const err = new Error();
+    err.status = 404;
     err.message = 'Looks like the book you requested does not exist.';
-    res.render('no-results');
+    next(err);
   } else {
-      res.render("update-book", { book });
+      console.log('reachable code');
+      res.render("update-book", { book, title: 'Update Book' });
   }  
 }));
 
-/* POST an updated book. */
-router.post('/books/:id', asyncHandler(async (req, res) => {
+/* POST update book page. */
+router.post('/books/:id', asyncHandler(async(req, res) => {
   let book;
   try {
-    book = await Book.findByPk(parseInt(req.params.id));
+    book = await Book.findByPk(req.params.id);
     if(book) {
       await book.update(req.body);
-      res.redirect(`/books/?page=0`);
+      res.redirect('/books/?page=0');
     } else {
       res.sendStatus(404);
     }
   } catch (err) {
-    if(err.name === 'SequelizeValidationError') {
+    if(err.name === "SequelizeValidationError") {
       book = await Book.build(req.body);
-      book.id = req.params.id;
-      res.render('update-book', { book, errors: err.errors})
+      book.id = req.params.id; // make sure correct article gets updated
+      res.render("update-book", { book, errors: err.errors, title: "Update Book" })
     } else {
-      throw err;
+      throw error;
     }
   }
 }));
